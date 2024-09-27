@@ -92,7 +92,7 @@
     <section class="form-section">
         <div class="container-star">
             <h2>Califica nuestra página</h2>
-                <form action="calificacion.php" method="post">
+                <form action="" method="post">
                 <div class="rating-star"> 
                     <input type="radio" name="stars" id="star5" value="5">
                     <label for="star5">★</label>
@@ -109,6 +109,54 @@
                 <textarea name="comments-star" rows="4" cols="50" placeholder="Deja tus comentarios aquí..."></textarea>
                 <br><br>
                 <button type="submit" class="submit-star">Enviar</button>
+                <?php
+                // Configuración de la conexión
+                $servername = "btlaynz5cwsyy7daqqaw-mysql.services.clever-cloud.com"; // Servidor local
+                $username = "u5o278ogjyekr5ou"; // Nombre de usuario, cámbialo si es necesario
+                $password = "WveW6cDs5mnsr8uw1JXn"; // Contraseña del usuario, cámbiala si es necesario
+                $dbname = "btlaynz5cwsyy7daqqaw"; // Nombre de tu base de datos
+                
+                // Crear la conexión
+                $conn = new mysqli($servername, $username, $password, $database);
+                
+                // Verificar la conexión
+                if ($conn->connect_error) {
+                    die("La conexión falló: " . $conn->connect_error);
+                }
+                
+                
+                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                    // Recoger datos del formulario
+                    $calificacion = isset($_POST['stars']) ? intval($_POST['stars']) : 0;
+                    $comentario = isset($_POST['comments-star']) ? $_POST['comments-star'] : '';
+                
+                    // Validar que se haya seleccionado una calificación
+                    if ($calificacion > 0) {
+                        // Preparar la consulta SQL para insertar los datos
+                        $stmt = $conn->prepare("INSERT INTO calificacion (Calificacion, Comentario) VALUES (?, ?)");
+                        $stmt->bind_param("is", $calificacion, $comentario);
+                
+                        // Ejecutar la consulta
+                        if ($stmt->execute()) {
+                            echo "<script>
+                                    alert('se a enviado exitosamente');
+                                    window.location.href = 'index.html'; // Cambia a la página de inicio
+                                  </script>";
+                        } else {
+                            echo "Error: " . $stmt->error;
+                        }
+                
+                        // Cerrar la declaración
+                        $stmt->close();
+                    } else {
+                        echo "Por favor selecciona una calificación.";
+                    }
+                
+                    // Cerrar la conexión
+                    $conn->close();
+                }
+                ?>
+                
             </form>
         </div>
     </section>
